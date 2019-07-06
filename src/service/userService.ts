@@ -13,7 +13,7 @@ export class userService{
             let users = await userModel.findOne({ mobile: req.body.mobile}).exec();
             let password = await bcrypt.hash(req.body.password,12);
             req.body.password = password;
-
+            console.log(password);
 
             if(users === null)
             {
