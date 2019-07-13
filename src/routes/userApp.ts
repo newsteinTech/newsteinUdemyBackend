@@ -9,3 +9,4 @@ userApp.post('/login',userController.login);
 userApp.post('/teacherDetails',userController.teacherDetails);
 userApp.post('/studentDetails',userController.studentDetails);
 userApp.post('/forgotPassword',userController.forgotPassword);
+userApp.post('/resetPassword',userController.resetPassword);

@@ -28,6 +28,11 @@ export class userController{
         res.send(response);
     }
 
+    public static async resetPassword(req : express.Request, res: express.Response){
+        let response = await userService.resetPassword(req);
+        res.send(response);
+    }
+
    public static async login(req : express.Request, res: express.Response)
    {
        let response = await userService.userLogin(req);

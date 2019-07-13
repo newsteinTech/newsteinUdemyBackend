@@ -14,8 +14,6 @@ export class userService{
         try{
             let users = await userModel.findOne({ mobile: req.body.mobile }).exec();
             let password = await bcrypt.hash(req.body.password,12);
-            req.body.password = password;
-            console.log(password);
 
             if(users === null)
             {
@@ -69,8 +67,8 @@ export class userService{
     
             let info = await transporter.sendMail({
                 from: 'yash.4198@gmail.com', 
-                to: users.email, 
-                subject: "Test Mail",
+                to: users["email"], 
+                subject: "Account Details",
                 text: messageForUser // plain text body
             });
     
@@ -161,13 +159,34 @@ export class userService{
                 return ResponseModel.getInValidResponse("No Such User Exist");
             }
 
-            user["password"] = "yashABCD";
+            let temp_password = "yash@1998";
+            user["password"] = await bcrypt.hash(temp_password,12);
             await user.save();
 
-            let msg = "Your New Password : "+user["password"];
+            let msg = "Your New Password : "+temp_password;
             let response = await userService.sendMail(user,msg);
 
             return ResponseModel.getValidResponse(response);
+        }catch(err){
+            console.log("Error");
+            return ResponseModel.getInValidResponse(err);
+        }
+    }
+
+    public static async resetPassword(req){
+        try{
+            let users = await userModel.findOne({ mobile:req.body.mobile}).exec();
+            let actual_password = await bcrypt.compare(req.body.password,users["password"]);
+
+            if(!actual_password){
+                return ResponseModel.getInValidResponse("Wrong Credentials");
+            }
+    
+            let newPassword = await bcrypt.hash(req.body.newPassword,12);
+            users["password"] = newPassword; 
+            await users.save();
+            return ResponseModel.getValidResponse("Password Updated Successfully");
+
         }catch(err){
             console.log("Error");
             return ResponseModel.getInValidResponse(err);
