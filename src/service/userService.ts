@@ -53,7 +53,7 @@ export class userService{
         }
     }
 
-    public static async sendMail(users,messageByUser){
+    public static async sendMail(users,messageForUser){
         try{
             let testAccount = await nodeMailer.createTestAccount();
 
@@ -71,7 +71,7 @@ export class userService{
                 from: 'yash.4198@gmail.com', 
                 to: users.email, 
                 subject: "Test Mail",
-                text: messageByUser // plain text body
+                text: messageForUser // plain text body
             });
     
             console.log("Message sent: %s", info.messageId);
