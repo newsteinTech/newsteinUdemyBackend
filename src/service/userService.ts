@@ -4,13 +4,15 @@ import * as jwt from 'jsonwebtoken';
 import * as bcrypt from 'bcrypt';
 import { ResponseModel } from '../models/Schemas/ResponseModel';
 import { userModel } from '../models/Schemas/userSchema';
+import { studentModel } from '../models/Schemas/studentSchema';
+import { teacherModel } from '../models/Schemas/teacherSchema';
 
 
 export class userService{
 
     public static async register(req : express.Request){
         try{
-            let users = await userModel.findOne({ mobile: req.body.mobile}).exec();
+            let users = await userModel.findOne({ mobile: req.body.mobile }).exec();
             let password = await bcrypt.hash(req.body.password,12);
             req.body.password = password;
             console.log(password);
@@ -20,10 +22,25 @@ export class userService{
                 users = new userModel(req.body);
                 console.log(users);
 
-                let response = await userService.sendMail(users);
+                let msg = "Congratulations...!! You have Successfully joined our online learning Portal.. Enjoy!!";
+                let response = await userService.sendMail(users,msg);
                 console.log(response);
                 
                 await users.save();
+
+                if(users["isAstudent"]===true){
+                    let students = new studentModel();
+                    students["user"] = users._id;
+                    await students.save();
+                }
+
+                else if(users["isAteacher"]===true){
+                    let teacher = new teacherModel();
+                    teacher["user"] = users._id;
+
+                    await teacher.save();
+                }
+
                 return ResponseModel.getValidResponse(users);                
             }
 
@@ -36,7 +53,7 @@ export class userService{
         }
     }
 
-    public static async sendMail(users){
+    public static async sendMail(users,messageByUser){
         try{
             let testAccount = await nodeMailer.createTestAccount();
 
@@ -54,7 +71,7 @@ export class userService{
                 from: 'yash.4198@gmail.com', 
                 to: users.email, 
                 subject: "Test Mail",
-                text: "Congratulations!!!! You have successfully joined our online Learning portal. Enjoy!!", // plain text body
+                text: messageByUser // plain text body
             });
     
             console.log("Message sent: %s", info.messageId);
@@ -65,6 +82,95 @@ export class userService{
             console.log("Failed to Send Mail");
             console.log(err);
             return ResponseModel.getInValidResponse("Failed to send Mail");
+        }
+    }
+
+    public static async studentDetails(req){
+        try{
+            let user = await userModel.findOne({mobile : req.body.mobile}).exec();
+            
+            if(user===null)
+            {
+                return ResponseModel.getInValidResponse("No such user Exist");
+            }
+
+            let actual_password = await bcrypt.compare(req.body.password,user["password"]);
+
+            if(!actual_password)
+            {
+                return ResponseModel.getInValidResponse("Wrong Credentials");
+            }
+
+            let student = await studentModel.findOne({user : user._id}).exec();
+            
+            if(student===null)
+            {
+                return ResponseModel.getInValidResponse("There is no such Student");
+            }
+
+            student["college"] = req.body.college;
+            student["department"] = req.body.department;
+
+            await student.save();
+            return ResponseModel.getValidResponse("Student Details Recorded");
+        }catch(err){
+            console.log("Error");
+            return ResponseModel.getInValidResponse(err);
+        }
+    }
+
+    public static async teacherDetails(req){
+        try{
+            let user = await userModel.findOne({mobile:req.body.mobile}).exec();
+            
+            if(user === null)
+            {
+                return ResponseModel.getInValidResponse("No Such User Exist");
+            }
+
+            let actual_password = await bcrypt.compare(req.body.password,user["password"]);
+            
+            if(!actual_password)
+            {
+                return ResponseModel.getInValidResponse("Wrong Credentials");
+            }
+
+            let teacher = await teacherModel.findOne({user: user._id}).exec();
+
+            teacher["job"] = req.body.job;
+            teacher["experience"] = req.body.experience;
+            teacher["qualification"] = req.body.qualification;
+            teacher["college"] = req.body.college;
+
+            await teacher.save();
+            console.log(teacher);
+            return ResponseModel.getValidResponse("Teacher Details Recorded");
+
+        }catch(err){
+            console.log("Error");
+            return ResponseModel.getInValidResponse(err);
+        }
+    }
+
+    public static async forgotPassword(req){
+        try{
+            let user = await userModel.findOne({mobile:req.body.mobile}).exec();
+            
+            if(user===null)
+            {
+                return ResponseModel.getInValidResponse("No Such User Exist");
+            }
+
+            user["password"] = "yashABCD";
+            await user.save();
+
+            let msg = "Your New Password : "+user["password"];
+            let response = await userService.sendMail(user,msg);
+
+            return ResponseModel.getValidResponse(response);
+        }catch(err){
+            console.log("Error");
+            return ResponseModel.getInValidResponse(err);
         }
     }
 

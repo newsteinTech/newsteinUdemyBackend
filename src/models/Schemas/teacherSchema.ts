@@ -1,9 +1,11 @@
 import * as mongoose from 'mongoose';
 
 var teacher = new mongoose.Schema({
-    name : {type: String},
-    email : {type: String},
-    mobile : {type: Number},
+    user : {type: mongoose.SchemaTypes.ObjectId, ref:"theUsers"},
+    job : {type: String},
+    experience : {type : Number},
+    qualification : {type: String},
+    college : {type : String},
     courses_published : [{type: mongoose.SchemaTypes.ObjectId, ref:"theCourse"}]
 });
 

@@ -6,4 +6,6 @@ export const userApp : express.Router = express.Router();
 
 userApp.post('/register',userController.register);
 userApp.post('/login',userController.login);
-//userApp.post('/sendMail',userController.sendMail);
+userApp.post('/teacherDetails',userController.teacherDetails);
+userApp.post('/studentDetails',userController.studentDetails);
+userApp.post('/forgotPassword',userController.forgotPassword);
