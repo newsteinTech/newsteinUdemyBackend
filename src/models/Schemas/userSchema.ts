@@ -5,8 +5,7 @@ var userSchema = new mongoose.Schema({
     email : {type: String, unique:true},
     mobile : {type: Number, unique:true},
     password : {type: String, required:true},
-    isAteacher : {type: Boolean, required:true},
-    isAstudent : {type: Boolean, required:true}
+    role : {type:String, enum:["student","teacher","admin"], default:"created"}
 });
 
 export var userModel = mongoose.model("theUsers",userSchema);

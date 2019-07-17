@@ -14,36 +14,37 @@ export class userService{
         try{
             let users = await userModel.findOne({ mobile: req.body.mobile }).exec();
             let password = await bcrypt.hash(req.body.password,12);
+            req.body.password = password;
 
-            if(users === null)
+            if(users!=null)
             {
-                users = new userModel(req.body);
-                console.log(users);
-
-                let msg = "Congratulations...!! You have Successfully joined our online learning Portal.. Enjoy!!";
-                let response = await userService.sendMail(users,msg);
-                console.log(response);
-                
-                await users.save();
-
-                if(users["isAstudent"]===true){
-                    let students = new studentModel();
-                    students["user"] = users._id;
-                    await students.save();
-                }
-
-                else if(users["isAteacher"]===true){
-                    let teacher = new teacherModel();
-                    teacher["user"] = users._id;
-
-                    await teacher.save();
-                }
-
-                return ResponseModel.getValidResponse(users);                
+                console.log("User Already Exist");
+                return ResponseModel.getInValidResponse("Account Already exist");
             }
 
-            console.log("User Already Exists");
-            return ResponseModel.getInValidResponse("User Already Exists");
+
+            users = new userModel(req.body);
+            console.log(users);
+
+            await users.save();
+
+            let msg = "Congratulations...!! You have Successfully joined our online learning Portal.. Enjoy!!";
+            let response = await userService.sendMail(users,msg);
+            console.log(response);
+                
+            if(users["role"]==="student"){
+                let students = new studentModel();
+                students["user"] = users._id;
+                await students.save();
+            }
+
+            else if(users["role"]==="teacher"){
+                let teacher = new teacherModel();
+                teacher["user"] = users._id;
+                await teacher.save();
+            }
+
+            return ResponseModel.getValidResponse(users);                
 
         }catch(err){
             console.log("Error : ");
