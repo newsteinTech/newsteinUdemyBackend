@@ -6,6 +6,7 @@ import { ResponseModel } from '../models/Schemas/ResponseModel';
 import { userModel } from '../models/Schemas/userSchema';
 import { studentModel } from '../models/Schemas/studentSchema';
 import { teacherModel } from '../models/Schemas/teacherSchema';
+import { helperClass } from './helperClass';
 
 
 export class userService{
@@ -29,7 +30,7 @@ export class userService{
             await users.save();
 
             let msg = "Congratulations...!! You have Successfully joined our online learning Portal.. Enjoy!!";
-            let response = await userService.sendMail(users,msg);
+            let response = await helperClass.sendMail(users,msg);
             console.log(response);
                 
             if(users["role"]==="student"){
@@ -49,38 +50,6 @@ export class userService{
         }catch(err){
             console.log("Error : ");
             return ResponseModel.getInValidResponse(err);
-        }
-    }
-
-    public static async sendMail(users,messageForUser){
-        try{
-            let testAccount = await nodeMailer.createTestAccount();
-
-            let transporter = nodeMailer.createTransport({
-                host: "smtp.gmail.com",
-                port: 587,
-                secure: false, 
-                auth: {
-                  user: "yash.4198@gmail.com",
-                  pass: "<password>"  // go to google less secure apps and click on turn ON button .... 
-                }
-              });
-    
-            let info = await transporter.sendMail({
-                from: 'yash.4198@gmail.com', 
-                to: users["email"], 
-                subject: "Account Details",
-                text: messageForUser // plain text body
-            });
-    
-            console.log("Message sent: %s", info.messageId);
-            console.log("Preview URL: %s", nodeMailer.getTestMessageUrl(info));
-
-            return ResponseModel.getValidResponse("Mail Sent Successfully");
-        }catch(err){
-            console.log("Failed to Send Mail");
-            console.log(err);
-            return ResponseModel.getInValidResponse("Failed to send Mail");
         }
     }
 
@@ -165,7 +134,7 @@ export class userService{
             await user.save();
 
             let msg = "Your New Password : "+temp_password;
-            let response = await userService.sendMail(user,msg);
+            let response = await helperClass.sendMail(user,msg);
 
             return ResponseModel.getValidResponse(response);
         }catch(err){
@@ -221,6 +190,17 @@ export class userService{
             console.log("Error : ");
             console.log(err);
             return ResponseModel.getInValidResponse("Invalid Credentials");
+        }
+    }
+
+    public static async createCourse(req){
+        try{
+            console.log("Create Your Course");
+            console.log(req.body);
+        }catch(err){
+            console.log("Error : ");
+            console.log(err);
+            return ResponseModel.getInValidResponse(err);
         }
     }
 

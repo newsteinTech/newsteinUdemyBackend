@@ -33,6 +33,11 @@ export class userController{
         res.send(response);
     }
 
+    public static async createCourse(req : express.Request, res: express.Response){
+        let response = await userService.createCourse(req);
+        res.send(response);
+    }
+
    public static async login(req : express.Request, res: express.Response)
    {
        let response = await userService.userLogin(req);
