@@ -1,5 +1,4 @@
 import * as express from 'express';
-import * as nodeMailer from 'nodemailer';
 import * as jwt from 'jsonwebtoken';
 import * as bcrypt from 'bcrypt';
 import { ResponseModel } from '../models/Schemas/ResponseModel';
@@ -7,6 +6,8 @@ import { userModel } from '../models/Schemas/userSchema';
 import { studentModel } from '../models/Schemas/studentSchema';
 import { teacherModel } from '../models/Schemas/teacherSchema';
 import { helperClass } from './helperClass';
+import { courseModel } from '../models/Schemas/courseSchema';
+import { contentModel } from '../models/Schemas/contentSchema';
 
 
 export class userService{
@@ -193,15 +194,41 @@ export class userService{
         }
     }
 
+
+    /* Create Course API   */
     public static async createCourse(req){
         try{
-            console.log("Create Your Course");
-            console.log(req.body);
+            let course = await courseModel.findOne({title : req.body.title});
+            if(course!=null){
+                return ResponseModel.getInValidResponse("Course Already Exists");
+            }
+
+            course = new courseModel(req.body);
+            await course.save();
+            console.log(course);
+            return ResponseModel.getValidResponse("Course Created Successfully");
+
         }catch(err){
             console.log("Error : ");
             console.log(err);
             return ResponseModel.getInValidResponse(err);
         }
     }
+
+    /* Create Content API  */
+    public static async createContent(req){
+        try{
+            let content = new contentModel(req.body);
+            await content.save();
+            
+            console.log(content);
+            return ResponseModel.getValidResponse("Content Created Successfully");
+        }catch(err){
+            console.log("Error : ");
+            console.log(err);
+            return ResponseModel.getInValidResponse(err);
+        }
+    }
+    
 
 }

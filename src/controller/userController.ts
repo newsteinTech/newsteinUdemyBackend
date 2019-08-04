@@ -38,6 +38,11 @@ export class userController{
         res.send(response);
     }
 
+    public static async createContent(req : express.Request, res: express.Response){
+        let response = await userService.createContent(req);
+        res.send(response);
+    }
+
    public static async login(req : express.Request, res: express.Response)
    {
        let response = await userService.userLogin(req);

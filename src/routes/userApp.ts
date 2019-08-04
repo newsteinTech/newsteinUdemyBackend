@@ -13,4 +13,5 @@ userApp.post('/studentDetails',userController.studentDetails);
 userApp.post('/forgotPassword',userController.forgotPassword);
 userApp.post('/resetPassword',userController.resetPassword);
 
-userApp.post('/courseDetails',userController.createCourse);
+userApp.post('/createCourse',userController.createCourse);
+userApp.post('/createContent',userController.createContent);
