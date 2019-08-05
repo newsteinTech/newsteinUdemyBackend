@@ -215,13 +215,21 @@ export class userService{
         }
     }
 
-    /* Create Content API  */
     public static async createContent(req){
         try{
+            let course = await courseModel.findOne({title : req.body.courseName});
+            if(course===null){
+                return ResponseModel.getInValidResponse("No Such course Exist");
+            }
+           
             let content = new contentModel(req.body);
             await content.save();
-            
+
+            course["contents"].push(content._id);
+            await course.save();
+            console.log(course);
             console.log(content);
+            
             return ResponseModel.getValidResponse("Content Created Successfully");
         }catch(err){
             console.log("Error : ");
@@ -230,5 +238,4 @@ export class userService{
         }
     }
     
-
 }
