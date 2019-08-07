@@ -1,5 +1,4 @@
 import * as express from 'express';
-import * as bodyParser from 'body-parser';
 import { userController } from '../controller/userController';
 export const userApp : express.Router = express.Router();
 
@@ -12,6 +11,3 @@ userApp.post('/studentDetails',userController.studentDetails);
 
 userApp.post('/forgotPassword',userController.forgotPassword);
 userApp.post('/resetPassword',userController.resetPassword);
-
-userApp.post('/createCourse',userController.createCourse);
-userApp.post('/createContent',userController.createContent);

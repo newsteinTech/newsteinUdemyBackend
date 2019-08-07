@@ -6,9 +6,6 @@ import { userModel } from '../models/Schemas/userSchema';
 import { studentModel } from '../models/Schemas/studentSchema';
 import { teacherModel } from '../models/Schemas/teacherSchema';
 import { helperClass } from './helperClass';
-import { courseModel } from '../models/Schemas/courseSchema';
-import { contentModel } from '../models/Schemas/contentSchema';
-
 
 export class userService{
 
@@ -194,48 +191,4 @@ export class userService{
         }
     }
 
-
-    /* Create Course API   */
-    public static async createCourse(req){
-        try{
-            let course = await courseModel.findOne({title : req.body.title});
-            if(course!=null){
-                return ResponseModel.getInValidResponse("Course Already Exists");
-            }
-
-            course = new courseModel(req.body);
-            await course.save();
-            console.log(course);
-            return ResponseModel.getValidResponse("Course Created Successfully");
-
-        }catch(err){
-            console.log("Error : ");
-            console.log(err);
-            return ResponseModel.getInValidResponse(err);
-        }
-    }
-
-    public static async createContent(req){
-        try{
-            let course = await courseModel.findOne({title : req.body.courseName});
-            if(course===null){
-                return ResponseModel.getInValidResponse("No Such course Exist");
-            }
-           
-            let content = new contentModel(req.body);
-            await content.save();
-
-            course["contents"].push(content._id);
-            await course.save();
-            console.log(course);
-            console.log(content);
-            
-            return ResponseModel.getValidResponse("Content Created Successfully");
-        }catch(err){
-            console.log("Error : ");
-            console.log(err);
-            return ResponseModel.getInValidResponse(err);
-        }
-    }
-    
 }

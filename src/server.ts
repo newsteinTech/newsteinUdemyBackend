@@ -3,6 +3,7 @@ import * as bodyParser from 'body-parser';
 import { dbConnection } from './startup/dbConnection';
 import { userApp } from './routes/userApp';
 import { Authenticate } from './middleware/authenticate';
+import { courseApp } from './routes/courseApp';
 
 class Server{
     public app : express.Application;
@@ -22,6 +23,7 @@ class Server{
         dbConnection.connectDb();
 
         this.app.use("/user",userApp);
+        this.app.use("/course",courseApp);
 
     }
 }

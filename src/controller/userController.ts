@@ -9,7 +9,6 @@ export class userController{
         res.send(response);
     }
 
-
     public static async teacherDetails(req : express.Request, res : express.Response)
     {
         let response = await userService.teacherDetails(req);
@@ -33,19 +32,10 @@ export class userController{
         res.send(response);
     }
 
-    public static async createCourse(req : express.Request, res: express.Response){
-        let response = await userService.createCourse(req);
+    public static async login(req : express.Request, res: express.Response)
+    {
+        let response = await userService.userLogin(req);
         res.send(response);
     }
 
-    public static async createContent(req : express.Request, res: express.Response){
-        let response = await userService.createContent(req);
-        res.send(response);
-    }
-
-   public static async login(req : express.Request, res: express.Response)
-   {
-       let response = await userService.userLogin(req);
-       res.send(response);
-   }
 }
