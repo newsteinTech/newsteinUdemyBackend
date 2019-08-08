@@ -5,5 +5,4 @@ export const courseApp : express.Router = express.Router();
 
 courseApp.post('/createCourse',courseController.createCourse);
 courseApp.post('/createContent',courseController.createContent);
-
-//courseApp.post('/subscribeCourse',courseController.subscribeCourse);
+courseApp.post('/subscribeCourse',courseController.subscribeCourse);

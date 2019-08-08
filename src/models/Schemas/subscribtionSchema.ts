@@ -7,4 +7,4 @@ var subscribtion = new mongoose.Schema({
     paymentId : {type: String, required:true}
 });
 
-export var contentModel = mongoose.model("theSubscription",subscribtion);
+export var subscribeModel = mongoose.model("theSubscription",subscribtion);

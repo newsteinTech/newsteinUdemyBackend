@@ -13,10 +13,9 @@ export class courseController{
         res.send(response);
     }
 
-/*
    public static async subscribeCourse(req : express.Request, res: express.Response){
        let response = await courseService.subscribeCourse(req);
        res.send(response);
    }
-*/
+   
 }
