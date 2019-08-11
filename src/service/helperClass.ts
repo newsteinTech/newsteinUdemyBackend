@@ -35,4 +35,18 @@ export class helperClass{
         }
     }
 
+    public static updateRecord(source,destination){
+        for (var prop in destination) {
+            if (prop == "_id" || prop == "__v" || prop == "createdAt") {
+                continue;
+            }
+
+            if (destination.hasOwnProperty(prop)) {
+                source[prop] = destination[prop];
+            }
+        }
+
+        return source       
+    }
+
 }

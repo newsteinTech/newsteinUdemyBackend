@@ -8,6 +8,7 @@ var course = new mongoose.Schema({
     comments : {type:mongoose.SchemaTypes.ObjectId, ref:"theComment"},
     student_count : {type:Number, default:0},
     contents : [{type:mongoose.SchemaTypes.ObjectId, ref:"theContent"}],
+    status : {type:String, enum:["present","deleted"], default:"present"}
 });
 
 export var courseModel = mongoose.model("theCourse",course);

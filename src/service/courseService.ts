@@ -5,23 +5,49 @@ import { ResponseModel } from '../models/Schemas/ResponseModel';
 import { contentModel } from '../models/Schemas/contentSchema';
 import { studentModel } from '../models/Schemas/studentSchema';
 import { subscribeModel } from '../models/Schemas/subscribtionSchema';
+import { helperClass } from './helperClass';
+import { teacherModel } from '../models/Schemas/teacherSchema';
 
 export class courseService{
 
     public static async createCourse(req){
         try{
             let course = await courseModel.findOne({title : req.body.title}).exec();
+            let teacher = await teacherModel.findOne({title : req.body.teacherId}).exec();
+
             if(course != null){
                 return ResponseModel.getInValidResponse("Course Already Exist");
             }
 
-            course = new courseModel(req.body);
-            await course.save();
+            else if(teacher === null){
+                return ResponseModel.getInValidResponse("Invalid Credentials");
+            }
 
+            course = new courseModel(req.body);
+            teacher["courses_published"].push(course._id);
+            
+            await course.save();
+            await teacher.save();
             return ResponseModel.getValidResponse("Course Created Successfully");
         }catch(err){
             console.log("Error : ");
             console.log(err);
+            return ResponseModel.getInValidResponse(err);
+        }
+    }
+
+    public static async deleteCourse(req){
+        try{
+            let course = await courseModel.findOne({_id : req.body.courseId}).exec();
+
+            if(course === null){
+                return ResponseModel.getInValidResponse("There is no Such Course");
+            }
+            course["status"] = "deleted";
+            await course.save();
+            return ResponseModel.getValidResponse("Course Is Deleted");
+        }catch(err){
+            console.log("Error : ");
             return ResponseModel.getInValidResponse(err);
         }
     }
@@ -46,11 +72,29 @@ export class courseService{
         }
     }
 
-    public static async subscribeCourse(req){
-/*
+    public static async updateContent(req){
         try{
-            let subscribeCourse = new subscribeModel(req.body);
+            let content = await contentModel.findOne({_id : req.body.contentId}).exec();
+            
+            if(content === null){
+                return ResponseModel.getInValidResponse("There is no such content");
+            }
 
+            console.log(content);
+            content = helperClass.updateRecord(content,req.body);
+            
+            await content.save();
+            console.log(content);
+            return ResponseModel.getValidResponse("Content Created Successfully");
+        }catch(err){
+            console.log("Error : ");
+            console.log(err);
+            return ResponseModel.getInValidResponse(err);
+        }
+    }
+
+    public static async subscribeCourse(req){
+        try{
             let course = await courseModel.findOne({_id : req.body.courseId}).exec();
             let student = await studentModel.findOne({_id : req.body.studentId}).exec();
 
@@ -58,6 +102,7 @@ export class courseService{
                 return ResponseModel.getInValidResponse("Invalid Credentials");
             }
 
+            let subscribeCourse = new subscribeModel(req.body);
             console.log(subscribeCourse);
             await subscribeCourse.save();
 
@@ -67,6 +112,5 @@ export class courseService{
             console.log(err);
             return ResponseModel.getInValidResponse(err);
         }
-*/
     }
 }

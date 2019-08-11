@@ -8,8 +8,18 @@ export class courseController{
         res.send(response);
     }
 
+    public static async deleteCourse(req : express.Request, res: express.Response){
+        let response = await courseService.deleteCourse(req);
+        res.send(response);
+    }
+
     public static async createContent(req : express.Request, res: express.Response){
         let response = await courseService.createContent(req);
+        res.send(response);
+    }
+
+    public static async updateContent(req : express.Request, res: express.Response){
+        let response = await courseService.updateContent(req);
         res.send(response);
     }
 
