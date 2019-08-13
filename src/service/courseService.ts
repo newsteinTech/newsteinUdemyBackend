@@ -5,7 +5,7 @@ import { ResponseModel } from '../models/Schemas/ResponseModel';
 import { contentModel } from '../models/Schemas/contentSchema';
 import { studentModel } from '../models/Schemas/studentSchema';
 import { subscribeModel } from '../models/Schemas/subscribtionSchema';
-import { helperClass } from './helperClass';
+import { HelperClass } from './helperClass';
 import { teacherModel } from '../models/Schemas/teacherSchema';
 
 export class courseService{
@@ -81,7 +81,7 @@ export class courseService{
             }
 
             console.log(content);
-            content = helperClass.updateRecord(content,req.body);
+            content = HelperClass.updateRecord(content,req.body);
             
             await content.save();
             console.log(content);

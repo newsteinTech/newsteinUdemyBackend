@@ -5,45 +5,45 @@ import { ResponseModel } from '../models/Schemas/ResponseModel';
 import { userModel } from '../models/Schemas/userSchema';
 import { studentModel } from '../models/Schemas/studentSchema';
 import { teacherModel } from '../models/Schemas/teacherSchema';
-import { helperClass } from './helperClass';
+import { HelperClass } from './helperClass';
 
 export class userService{
 
     public static async register(req : express.Request){
         try{
-            let users = await userModel.findOne({ mobile: req.body.mobile }).exec();
-            let password = await bcrypt.hash(req.body.password,12);
-            req.body.password = password;
+            let user = await userModel.findOne({ mobile: req.body.mobile }).exec();
 
-            if(users!=null)
+            if(user!=null)
             {
                 console.log("User Already Exist");
                 return ResponseModel.getInValidResponse("Account Already exist");
             }
 
+            let password = await bcrypt.hash(req.body.password,12);
+            req.body.password = password;
 
-            users = new userModel(req.body);
-            console.log(users);
+            user = new userModel(req.body);
+            console.log(user);
 
-            await users.save();
+            await user.save();
 
-            let msg = "Congratulations...!! You have Successfully joined our online learning Portal.. Enjoy!!";
-            let response = await helperClass.sendMail(users,msg);
+            let msg = "Congratulations "+ user["name"] + ",\nYou have Successfully joined our online learning Portal.. Enjoy!!";
+            let response = await HelperClass.sendMail(user,msg);
             console.log(response);
                 
-            if(users["role"]==="student"){
+            if(user["role"]==="student"){
                 let students = new studentModel();
-                students["user"] = users._id;
+                students["user"] = user._id;
                 await students.save();
             }
 
-            else if(users["role"]==="teacher"){
+            else if(user["role"]==="teacher"){
                 let teacher = new teacherModel();
-                teacher["user"] = users._id;
+                teacher["user"] = user._id;
                 await teacher.save();
             }
 
-            return ResponseModel.getValidResponse(users);                
+            return ResponseModel.getValidResponse("Details Are Recorded Successfully!!");               
 
         }catch(err){
             console.log("Error : ");
@@ -76,7 +76,9 @@ export class userService{
 
             student["college"] = req.body.college;
             student["department"] = req.body.department;
+            user["profileStatus"] = "complete";
 
+            await user.save();
             await student.save();
             return ResponseModel.getValidResponse("Student Details Recorded");
         }catch(err){
@@ -107,7 +109,9 @@ export class userService{
             teacher["experience"] = req.body.experience;
             teacher["qualification"] = req.body.qualification;
             teacher["college"] = req.body.college;
+            user["profileStatus"] = "complete";
 
+            await user.save();
             await teacher.save();
             console.log(teacher);
             return ResponseModel.getValidResponse("Teacher Details Recorded");
@@ -132,7 +136,7 @@ export class userService{
             await user.save();
 
             let msg = "Your New Password : "+temp_password;
-            let response = await helperClass.sendMail(user,msg);
+            let response = await HelperClass.sendMail(user,msg);
 
             return ResponseModel.getValidResponse(response);
         }catch(err){
@@ -172,13 +176,13 @@ export class userService{
             }
 
             let option : jwt.SignOptions = {
-                expiresIn : "1h"
+                expiresIn : "300h"
             };
 
             let payLoad = {
-                "userId" : user._id,
                 "name" : user["name"],
-                "mobile" : user["mobile"]
+                "mobile" : user["mobile"],
+                "role" : user["role"]
             };
 
             let accessToken = jwt.sign(payLoad,"secret",option);
