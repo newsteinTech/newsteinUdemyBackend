@@ -23,8 +23,6 @@ export class userService{
             req.body.password = password;
 
             user = new userModel(req.body);
-            console.log(user);
-
             await user.save();
 
             let msg = "Congratulations "+ user["name"] + ",\nYou have Successfully joined our online learning Portal.. Enjoy!!";
@@ -76,7 +74,7 @@ export class userService{
 
             student["college"] = req.body.college;
             student["department"] = req.body.department;
-            user["profileStatus"] = "complete";
+            user["profileStatus"] = true;
 
             await user.save();
             await student.save();
@@ -109,7 +107,7 @@ export class userService{
             teacher["experience"] = req.body.experience;
             teacher["qualification"] = req.body.qualification;
             teacher["college"] = req.body.college;
-            user["profileStatus"] = "complete";
+            user["profileStatus"] = true;
 
             await user.save();
             await teacher.save();

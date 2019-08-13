@@ -7,7 +7,7 @@ var userSchema = new mongoose.Schema({
     password : {type: String, required:true},
     role : {type:String, enum:["student","teacher","admin"], default:"created"},
     profilePic : {type:String},
-    profileStatus : {type:String, enum:["incomplete","complete"], default:"incomplete"},
+    profileStatus : {type:Boolean, default:false},
 });
 
 export var userModel = mongoose.model("theUsers",userSchema);
