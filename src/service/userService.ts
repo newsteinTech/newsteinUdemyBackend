@@ -41,7 +41,7 @@ export class userService{
                 await teacher.save();
             }
 
-            return ResponseModel.getValidResponse("Details Are Recorded Successfully!!");               
+            return ResponseModel.getValidResponse("Registered success. Plz proceed to login");               
 
         }catch(err){
             console.log("Error : ");
@@ -49,6 +49,28 @@ export class userService{
         }
     }
 
+    public static async updateUser(req){
+        try{
+            let user = await userModel.findOne({_id : req.body.userId}).exec();
+            
+            if(user === null){
+                return ResponseModel.getInValidResponse("There is no such user");
+            }
+
+            console.log(user);
+            user = HelperClass.updateRecord(user,req.body);
+            
+            await user.save();
+            console.log(user);
+            return ResponseModel.getValidResponse("User Details Updated Successfully");
+        }catch(err){
+            console.log("Error : ");
+            console.log(err);
+            return ResponseModel.getInValidResponse(err);
+        }
+    }
+
+    
     public static async studentDetails(req){
         try{
             let user = await userModel.findOne({mobile : req.body.mobile}).exec();
@@ -74,6 +96,7 @@ export class userService{
 
             student["college"] = req.body.college;
             student["department"] = req.body.department;
+            user["profilePic"] = req.body.profilePic;
             user["profileStatus"] = true;
 
             await user.save();
@@ -81,6 +104,27 @@ export class userService{
             return ResponseModel.getValidResponse("Student Details Recorded");
         }catch(err){
             console.log("Error");
+            return ResponseModel.getInValidResponse(err);
+        }
+    }
+
+    public static async updateStudent(req){
+        try{
+            let student = await studentModel.findOne({_id : req.body.studentId}).exec();
+            
+            if(student === null){
+                return ResponseModel.getInValidResponse("There is no such student");
+            }
+
+            console.log(student);
+            student = HelperClass.updateRecord(student,req.body);
+            
+            await student.save();
+            console.log(student);
+            return ResponseModel.getValidResponse("Student Details Updated Successfully");
+        }catch(err){
+            console.log("Error : ");
+            console.log(err);
             return ResponseModel.getInValidResponse(err);
         }
     }
@@ -104,9 +148,10 @@ export class userService{
             let teacher = await teacherModel.findOne({user: user._id}).exec();
 
             teacher["job"] = req.body.job;
-            teacher["experience"] = req.body.experience;
+            teacher["about"] = req.body.about;
             teacher["qualification"] = req.body.qualification;
             teacher["college"] = req.body.college;
+            user["profilePic"] = req.body.profilePic;
             user["profileStatus"] = true;
 
             await user.save();
@@ -116,6 +161,27 @@ export class userService{
 
         }catch(err){
             console.log("Error");
+            return ResponseModel.getInValidResponse(err);
+        }
+    }
+
+    public static async updateTeacher(req){
+        try{
+            let teacher = await teacherModel.findOne({_id : req.body.studentId}).exec();
+            
+            if(teacher === null){
+                return ResponseModel.getInValidResponse("There is no such Teacher");
+            }
+
+            console.log(teacher);
+            teacher = HelperClass.updateRecord(teacher,req.body);
+            
+            await teacher.save();
+            console.log(teacher);
+            return ResponseModel.getValidResponse("Teacher Details Updated Successfully");
+        }catch(err){
+            console.log("Error : ");
+            console.log(err);
             return ResponseModel.getInValidResponse(err);
         }
     }
@@ -145,16 +211,16 @@ export class userService{
 
     public static async resetPassword(req){
         try{
-            let users = await userModel.findOne({ mobile:req.body.mobile}).exec();
-            let actual_password = await bcrypt.compare(req.body.password,users["password"]);
+            let user = await userModel.findOne({ mobile:req.body.mobile}).exec();
+            let actualPassword = await bcrypt.compare(req.body.password,user["password"]);
 
-            if(!actual_password){
+            if(!actualPassword){
                 return ResponseModel.getInValidResponse("Wrong Credentials");
             }
     
             let newPassword = await bcrypt.hash(req.body.newPassword,12);
-            users["password"] = newPassword; 
-            await users.save();
+            user["password"] = newPassword; 
+            await user.save();
             return ResponseModel.getValidResponse("Password Updated Successfully");
 
         }catch(err){
@@ -173,14 +239,24 @@ export class userService{
                 return ResponseModel.getInValidResponse("User Does not exist");
             }
 
+            let actualPassword = await bcrypt.compare(req.body.password,user["password"]);
+
+            if(!actualPassword){
+                console.log("Error");
+                return ResponseModel.getInValidResponse("Wrong Credentials");
+            }
+
             let option : jwt.SignOptions = {
                 expiresIn : "300h"
             };
 
             let payLoad = {
+                "_id" : user._id,
                 "name" : user["name"],
                 "mobile" : user["mobile"],
-                "role" : user["role"]
+                "role" : user["role"],
+                "email" : user["email"],
+                "profileStatus" : user["profileStatus"]
             };
 
             let accessToken = jwt.sign(payLoad,"secret",option);

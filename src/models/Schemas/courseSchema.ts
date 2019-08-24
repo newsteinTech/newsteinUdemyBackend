@@ -5,6 +5,8 @@ var course = new mongoose.Schema({
     description : {type:String},
     teacher : {type:mongoose.SchemaTypes.ObjectId, ref:"theTeacher"},
     fee : {type:Number},
+    rating : {type: Number, default:0},
+    image : {type: String},
     comments : {type:mongoose.SchemaTypes.ObjectId, ref:"theComment"},
     student_count : {type:Number, default:0},
     contents : [{type:mongoose.SchemaTypes.ObjectId, ref:"theContent"}],

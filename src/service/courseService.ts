@@ -72,6 +72,27 @@ export class courseService{
         }
     }
 
+    public static async updateCourse(req){
+        try{
+            let course = await courseModel.findOne({_id : req.body.courseId}).exec();
+            
+            if(course === null){
+                return ResponseModel.getInValidResponse("There is no such content");
+            }
+
+            console.log(course);
+            course = HelperClass.updateRecord(course,req.body);
+            
+            await course.save();
+            console.log(course);
+            return ResponseModel.getValidResponse("Course Updated Successfully");
+        }catch(err){
+            console.log("Error : ");
+            console.log(err);
+            return ResponseModel.getInValidResponse(err);
+        }
+    }
+
     public static async updateContent(req){
         try{
             let content = await contentModel.findOne({_id : req.body.contentId}).exec();
