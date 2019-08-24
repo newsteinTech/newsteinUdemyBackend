@@ -13,6 +13,10 @@ export class courseController{
         res.send(response);
     }
 
+    public static async updateCourse(req : express.Request, res: express.Response){
+        let response = await courseService.updateCourse(req);
+        res.send(response);
+    }
     public static async createContent(req : express.Request, res: express.Response){
         let response = await courseService.createContent(req);
         res.send(response);

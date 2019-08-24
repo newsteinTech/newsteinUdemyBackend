@@ -52,26 +52,6 @@ export class courseService{
         }
     }
 
-    public static async createContent(req){
-        try{
-            let course = await courseModel.findOne({_id : req.body.courseId}).exec();
-            
-            let content = new contentModel(req.body);
-            course["contents"].push(content._id);
-
-            console.log(course);
-            console.log(content);
-
-            await content.save();
-            await course.save();
-            return ResponseModel.getValidResponse("Content Created Successfully");
-        }catch(err){
-            console.log("Error : ");
-            console.log(err);
-            return ResponseModel.getInValidResponse(err);
-        }
-    }
-
     public static async updateCourse(req){
         try{
             let course = await courseModel.findOne({_id : req.body.courseId}).exec();
@@ -86,6 +66,26 @@ export class courseService{
             await course.save();
             console.log(course);
             return ResponseModel.getValidResponse("Course Updated Successfully");
+        }catch(err){
+            console.log("Error : ");
+            console.log(err);
+            return ResponseModel.getInValidResponse(err);
+        }
+    }
+
+    public static async createContent(req){
+        try{
+            let course = await courseModel.findOne({_id : req.body.courseId}).exec();
+            
+            let content = new contentModel(req.body);
+            course["contents"].push(content._id);
+
+            console.log(course);
+            console.log(content);
+
+            await content.save();
+            await course.save();
+            return ResponseModel.getValidResponse("Content Created Successfully");
         }catch(err){
             console.log("Error : ");
             console.log(err);
