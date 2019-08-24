@@ -134,4 +134,15 @@ export class courseService{
             return ResponseModel.getInValidResponse(err);
         }
     }
+
+    public static async getAllCourses(req){
+        try{
+            let course = await courseModel.find().exec();
+            console.log(course);
+        }catch(err){
+            console.log("Error : ");
+            console.log(err);
+            return ResponseModel.getInValidResponse(err);
+        }
+    }
 }

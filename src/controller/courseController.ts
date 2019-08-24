@@ -17,6 +17,12 @@ export class courseController{
         let response = await courseService.updateCourse(req);
         res.send(response);
     }
+
+    public static async getAllCourses(req : express.Request, res: express.Response){
+        let response = await courseService.getAllCourses(req);
+        res.send(response);
+    }
+
     public static async createContent(req : express.Request, res: express.Response){
         let response = await courseService.createContent(req);
         res.send(response);
