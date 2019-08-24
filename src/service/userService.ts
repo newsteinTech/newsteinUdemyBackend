@@ -167,7 +167,7 @@ export class userService{
 
     public static async updateTeacher(req){
         try{
-            let teacher = await teacherModel.findOne({_id : req.body.studentId}).exec();
+            let teacher = await teacherModel.findOne({_id : req.body.teacherId}).exec();
             
             if(teacher === null){
                 return ResponseModel.getInValidResponse("There is no such Teacher");

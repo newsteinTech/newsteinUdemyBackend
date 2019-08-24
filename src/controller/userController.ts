@@ -35,7 +35,7 @@ export class userController{
 
     public static async updateStudent(req : express.Request, res: express.Response)
     {
-        let response = await userService.updateUser(req);
+        let response = await userService.updateStudent(req);
         res.send(response);
     }
     
