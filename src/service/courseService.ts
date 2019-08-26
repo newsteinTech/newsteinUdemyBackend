@@ -48,6 +48,7 @@ export class courseService{
             return ResponseModel.getValidResponse("Course Is Deleted");
         }catch(err){
             console.log("Error : ");
+            console.log(err);
             return ResponseModel.getInValidResponse(err);
         }
     }

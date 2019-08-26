@@ -45,6 +45,7 @@ export class userService{
 
         }catch(err){
             console.log("Error : ");
+            console.log(err);
             return ResponseModel.getInValidResponse(err);
         }
     }
@@ -104,6 +105,7 @@ export class userService{
             return ResponseModel.getValidResponse("Student Details Recorded");
         }catch(err){
             console.log("Error");
+            console.log(err);
             return ResponseModel.getInValidResponse(err);
         }
     }
@@ -161,6 +163,7 @@ export class userService{
 
         }catch(err){
             console.log("Error");
+            console.log(err);
             return ResponseModel.getInValidResponse(err);
         }
     }
@@ -205,6 +208,7 @@ export class userService{
             return ResponseModel.getValidResponse(response);
         }catch(err){
             console.log("Error");
+            console.log(err);
             return ResponseModel.getInValidResponse(err);
         }
     }
@@ -225,6 +229,7 @@ export class userService{
 
         }catch(err){
             console.log("Error");
+            console.log(err);
             return ResponseModel.getInValidResponse(err);
         }
     }
