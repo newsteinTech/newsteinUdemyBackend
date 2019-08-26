@@ -1,5 +1,6 @@
 import * as express from 'express';
 import * as bodyParser from 'body-parser';
+import * as cors from 'cors';
 import { dbConnection } from './startup/dbConnection';
 import { userApp } from './routes/userApp';
 import { Authenticate } from './middleware/authenticate';
@@ -21,7 +22,8 @@ class Server{
 
         this.configBodyParser();
         dbConnection.connectDb();
-
+        this.app.use(cors());
+        
         this.app.use("/user",userApp);
         this.app.use("/course",courseApp);
 
