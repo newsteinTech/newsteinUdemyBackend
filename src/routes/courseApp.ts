@@ -5,10 +5,10 @@ export const courseApp : express.Router = express.Router();
 
 courseApp.post('/createCourse',courseController.createCourse);
 courseApp.post('/updateCourse',courseController.updateCourse);
-courseApp.post('/deleteCourse',courseController.deleteCourse);
-courseApp.post('/allCourses',courseController.getAllCourses);
+courseApp.get('/deleteCourse/:id',courseController.deleteCourse);
+courseApp.get('/allCourses',courseController.getAllCourses);
 
-courseApp.post('/createContent',courseController.createContent);
-courseApp.post('/updateContent',courseController.updateContent);
+//courseApp.post('/createContent',courseController.createContent);
+//courseApp.post('/updateContent',courseController.updateContent);
 
 courseApp.post('/subscribeCourse',courseController.subscribeCourse);

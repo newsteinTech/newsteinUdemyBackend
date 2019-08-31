@@ -237,7 +237,7 @@ export class userService{
     public static async userLogin(req){
         try{
             let user = await userModel.findOne({mobile : req.body.mobile}).exec();
-            
+
             if(user === null)
             {
                 console.log(user);
@@ -259,13 +259,17 @@ export class userService{
                 "_id" : user._id,
                 "name" : user["name"],
                 "mobile" : user["mobile"],
-                "role" : user["role"],
-                "email" : user["email"],
-                "profileStatus" : user["profileStatus"]
+                "role" : user["role"]
             };
 
             let accessToken = jwt.sign(payLoad,"secret",option);
-            return ResponseModel.getValidResponse(accessToken);
+
+            let data = {
+                "payLoad" : payLoad,
+                "accessToken" : accessToken
+            };
+
+            return ResponseModel.getValidResponse(data);
                         
         }catch(err){
             console.log("Error : ");

@@ -7,7 +7,7 @@ export class Authenticate{
             let token = req.header("Authorization");
             if(!token)
             {
-                return res.send("Access Denied");
+                return res.status(401).send("Access Denied");
             }
 
             let decryptToken = jwt.verify(token,"secret");

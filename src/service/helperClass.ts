@@ -37,7 +37,7 @@ export class HelperClass{
 
     public static updateRecord(source,destination){
         for (var prop in destination) {
-            if (prop == "_id" || prop == "__v" || prop == "createdAt") {
+            if (prop == "_id" || prop == "__v") {
                 continue;
             }
 
