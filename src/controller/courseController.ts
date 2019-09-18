@@ -23,21 +23,6 @@ export class courseController{
         res.send(response);
     }
 
-    /*
-    public static async createContent(req : express.Request, res: express.Response){
-        let response = await courseService.createContent(req);
-        res.send(response);
-    }
-    */
-
-    /*
-    public static async updateContent(req : express.Request, res: express.Response){
-        let response = await courseService.updateContent(req);
-        res.send(response);
-    }
-    */
-
-    
    public static async subscribeCourse(req : express.Request, res: express.Response){
        let response = await courseService.subscribeCourse(req);
        res.send(response);

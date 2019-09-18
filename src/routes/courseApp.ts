@@ -7,8 +7,4 @@ courseApp.post('/createCourse',courseController.createCourse);
 courseApp.post('/updateCourse',courseController.updateCourse);
 courseApp.get('/deleteCourse/:id',courseController.deleteCourse);
 courseApp.get('/allCourses',courseController.getAllCourses);
-
-//courseApp.post('/createContent',courseController.createContent);
-//courseApp.post('/updateContent',courseController.updateContent);
-
 courseApp.post('/subscribeCourse',courseController.subscribeCourse);

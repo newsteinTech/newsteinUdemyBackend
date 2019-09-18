@@ -264,12 +264,12 @@ export class userService{
 
             let accessToken = jwt.sign(payLoad,"secret",option);
 
-            let data = {
-                "payLoad" : payLoad,
-                "accessToken" : accessToken
+            let token = {
+                "user" : payLoad,
+                "token" : accessToken
             };
 
-            return ResponseModel.getValidResponse(data);
+            return ResponseModel.getValidResponse(token);
                         
         }catch(err){
             console.log("Error : ");
