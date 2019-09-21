@@ -262,13 +262,15 @@ export class userService{
                 "role" : user["role"]
             };
 
-            let accessToken = jwt.sign(payLoad,"secret",option);
+
+            let accessToken = await jwt.sign(payLoad,"secret",option);
 
             let token = {
-                "user" : payLoad,
-                "token" : accessToken
+                "token" : accessToken,
+                "user" : payLoad
             };
-
+            
+            console.log(token);
             return ResponseModel.getValidResponse(token);
                         
         }catch(err){
