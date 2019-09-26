@@ -1,10 +1,7 @@
 import * as mongoose from 'mongoose';
+import { Collections } from '../shared/collections';
 
-var student = new mongoose.Schema({
-    user : {type:mongoose.SchemaTypes.ObjectId, ref:"theUsers"},
-    college : {type:String},
-    department: {type:String},
-    courses : [{type: mongoose.SchemaTypes.ObjectId , ref : "theCourse"}]
+export var StudentSchema = new mongoose.Schema({
+    user : {type:mongoose.SchemaTypes.ObjectId, ref:Collections.userCollectionName}
 });
-
-export var studentModel = mongoose.model("theStudent",student);
+export var studentModel = mongoose.model("theStudent",StudentSchema);

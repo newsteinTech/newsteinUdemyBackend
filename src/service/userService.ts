@@ -2,57 +2,56 @@ import * as express from 'express';
 import * as jwt from 'jsonwebtoken';
 import * as bcrypt from 'bcrypt';
 import { ResponseModel } from '../models/Schemas/ResponseModel';
-import { userModel } from '../models/Schemas/userSchema';
-import { studentModel } from '../models/Schemas/studentSchema';
-import { teacherModel } from '../models/Schemas/teacherSchema';
 import { HelperClass } from './helperClass';
+import { DbModel } from '../models/shared/dbModels';
+import { TokenPayload } from '../DTOs/tokenPayload';
+import { UserResponse } from '../DTOs/userResponse';
+import { LoginResponse } from '../DTOs/loginResponse';
 
 export class userService{
 
     public static async register(req : express.Request){
         try{
-            let user = await userModel.findOne({ mobile: req.body.mobile }).exec();
-
-            if(user!=null)
-            {
-                console.log("User Already Exist");
-                return ResponseModel.getInValidResponse("Account Already exist");
+            let user = await DbModel.userModel.findOne({ mobile: req.body.mobile }).exec();
+            if(user != null){
+                return ResponseModel.getInValidResponse("Account Already exist with given mobile number");
             }
 
             let password = await bcrypt.hash(req.body.password,12);
             req.body.password = password;
-
-            user = new userModel(req.body);
-            await user.save();
-
-            let msg = "Congratulations "+ user["name"] + ",\nYou have Successfully joined our online learning Portal.. Enjoy!!";
-            let response = await HelperClass.sendMail(user,msg);
-            console.log(response);
-                
-            if(user["role"]==="student"){
-                let students = new studentModel();
-                students["user"] = user._id;
-                await students.save();
+            if (req.body.isTeacher) {
+                req.body.role = "teacher"
             }
 
-            else if(user["role"]==="teacher"){
-                let teacher = new teacherModel();
-                teacher["user"] = user._id;
+            let newUser: any = new DbModel.userModel(req.body);
+            await newUser.save();
+
+            // let msg = "Congratulations "+ user["name"] + ",\nYou have Successfully joined our online learning Portal.. Enjoy!!";
+            // let response = await HelperClass.sendMail(user,msg);
+            // console.log(response);
+                
+            if(newUser.role === "student"){
+                let student = new DbModel.studentModel();
+                student["user"] = newUser;
+                await student.save();
+            }
+
+            else if(newUser["role"]==="teacher"){
+                let teacher = new DbModel.teacherModel();
+                teacher["user"] = newUser;
                 await teacher.save();
             }
 
             return ResponseModel.getValidResponse("Registered success. Plz proceed to login");               
-
         }catch(err){
-            console.log("Error : ");
             console.log(err);
-            return ResponseModel.getInValidResponse(err);
+            return ResponseModel.getInValidResponse(err.message);
         }
     }
 
     public static async updateUser(req){
         try{
-            let user = await userModel.findOne({_id : req.body.userId}).exec();
+            let user = await DbModel.userModel.findOne({_id : req.body.userId}).exec();
             
             if(user === null){
                 return ResponseModel.getInValidResponse("There is no such user");
@@ -74,7 +73,7 @@ export class userService{
     
     public static async studentDetails(req){
         try{
-            let user = await userModel.findOne({mobile : req.body.mobile}).exec();
+            let user = await DbModel.userModel.findOne({mobile : req.body.mobile}).exec();
             
             if(user===null)
             {
@@ -88,7 +87,7 @@ export class userService{
                 return ResponseModel.getInValidResponse("Wrong Credentials");
             }
 
-            let student = await studentModel.findOne({user : user._id}).exec();
+            let student = await DbModel.studentModel.findOne({user : user._id}).exec();
             
             if(student===null)
             {
@@ -112,7 +111,7 @@ export class userService{
 
     public static async updateStudent(req){
         try{
-            let student = await studentModel.findOne({_id : req.body.studentId}).exec();
+            let student = await DbModel.studentModel.findOne({_id : req.body.studentId}).exec();
             
             if(student === null){
                 return ResponseModel.getInValidResponse("There is no such student");
@@ -133,7 +132,7 @@ export class userService{
 
     public static async teacherDetails(req){
         try{
-            let user = await userModel.findOne({mobile:req.body.mobile}).exec();
+            let user = await DbModel.userModel.findOne({mobile:req.body.mobile}).exec();
             
             if(user === null)
             {
@@ -147,7 +146,7 @@ export class userService{
                 return ResponseModel.getInValidResponse("Wrong Credentials");
             }
 
-            let teacher = await teacherModel.findOne({user: user._id}).exec();
+            let teacher = await DbModel.studentModel.findOne({user: user._id}).exec();
 
             teacher["job"] = req.body.job;
             teacher["about"] = req.body.about;
@@ -170,7 +169,7 @@ export class userService{
 
     public static async updateTeacher(req){
         try{
-            let teacher = await teacherModel.findOne({_id : req.body.teacherId}).exec();
+            let teacher = await DbModel.studentModel.findOne({_id : req.body.teacherId}).exec();
             
             if(teacher === null){
                 return ResponseModel.getInValidResponse("There is no such Teacher");
@@ -191,7 +190,7 @@ export class userService{
 
     public static async forgotPassword(req){
         try{
-            let user = await userModel.findOne({mobile:req.body.mobile}).exec();
+            let user = await DbModel.userModel.findOne({mobile:req.body.mobile}).exec();
             
             if(user===null)
             {
@@ -215,7 +214,7 @@ export class userService{
 
     public static async resetPassword(req){
         try{
-            let user = await userModel.findOne({ mobile:req.body.mobile}).exec();
+            let user = await DbModel.userModel.findOne({ mobile:req.body.mobile}).exec();
             let actualPassword = await bcrypt.compare(req.body.password,user["password"]);
 
             if(!actualPassword){
@@ -236,42 +235,31 @@ export class userService{
 
     public static async userLogin(req){
         try{
-            let user = await userModel.findOne({mobile : req.body.mobile}).exec();
-
-            if(user === null)
-            {
-                console.log(user);
+            // Check user with mobile number
+            let user: any = await DbModel.userModel.findOne({mobile : req.body.mobile}).exec();
+            if(user === null){
                 return ResponseModel.getInValidResponse("User Does not exist");
             }
 
+            // Compare Password
             let actualPassword = await bcrypt.compare(req.body.password,user["password"]);
-
             if(!actualPassword){
-                console.log("Error");
                 return ResponseModel.getInValidResponse("Wrong Credentials");
             }
 
+            // Create token
             let option : jwt.SignOptions = {
                 expiresIn : "300h"
             };
 
-            let payLoad = {
-                "_id" : user._id,
-                "name" : user["name"],
-                "mobile" : user["mobile"],
-                "role" : user["role"]
-            };
-
-
+            let payLoad: TokenPayload = new TokenPayload(user);
             let accessToken = await jwt.sign(payLoad,"secret",option);
 
-            let token = {
-                "token" : accessToken,
-                "user" : payLoad
-            };
-            
-            console.log(token);
-            return ResponseModel.getValidResponse(token);
+            // Create login response
+            let userResponse : UserResponse = new UserResponse(user);
+            let loginResponse: LoginResponse = new LoginResponse(accessToken, userResponse);
+   
+            return ResponseModel.getValidResponse(loginResponse);
                         
         }catch(err){
             console.log("Error : ");

@@ -1,7 +1,7 @@
 export class ResponseModel{
     public isValid : boolean;
     public data : any;
-    public errors : any;
+    public errors : string[];
 
     public constructor(isValid : boolean, data: any, errors: any){
         this.isValid = isValid;
@@ -13,7 +13,7 @@ export class ResponseModel{
         return new ResponseModel(true,data,null);
     }
 
-    public static getInValidResponse(errors:any){
-        return new ResponseModel(false,null,errors);
+    public static getInValidResponse(error:string){
+        return new ResponseModel(false,null,[error]);
     }
 }

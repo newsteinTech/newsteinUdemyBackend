@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "tsc && node dist/server.js"
+    "start": "tsc && node dist/server.js",
+    "deploy": "scp -i \"tutorial.pem\" -r ./dist/ ubuntu@ec2-13-232-88-44.ap-south-1.compute.amazonaws.com:/home/ubuntu/project/udemyBackend/dist"
   },
   "author": "",
   "license": "ISC",

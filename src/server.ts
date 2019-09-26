@@ -1,32 +1,36 @@
 import * as express from 'express';
 import * as bodyParser from 'body-parser';
 import * as cors from 'cors';
-import { dbConnection } from './startup/dbConnection';
-import { userApp } from './routes/userApp';
-import { Authenticate } from './middleware/authenticate';
-import { courseApp } from './routes/courseApp';
+import { DbConnection } from './startup/dbConnection';
+import { Routes } from "./startup/router";
+import { ApiLogger } from './middleware/apiLogger';
 
 class Server{
+    private static PORT: number = 5000;
     public app : express.Application;
+
+    public constructor(){
+        this.app = express();   
+
+        this.configBodyParser();
+        this.app.use(cors());
+        this.registerMiddleWares();
+
+        DbConnection.connectDb();
+        Routes.registerRoutes(this.app);
+
+        this.app.listen(Server.PORT,"localhost",()=>{
+            console.log("App is running fine on port: ", Server.PORT);
+        });
+    }
 
     private configBodyParser():void{
         this.app.use(bodyParser.json());
         this.app.use(bodyParser.urlencoded({extended : false}));
     }
 
-    public constructor(){
-        this.app = express();
-        this.app.listen(3000,"localhost",()=>{
-            console.log("App is running fine");
-        });
-
-        this.configBodyParser();
-        dbConnection.connectDb();
-        this.app.use(cors());
-        
-        this.app.use("/user",userApp);
-        this.app.use("/course",courseApp);
-
+    private registerMiddleWares() {
+        this.app.use(ApiLogger.log);
     }
 }
 
