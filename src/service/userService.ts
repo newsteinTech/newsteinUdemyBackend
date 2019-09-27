@@ -1,7 +1,7 @@
 import * as express from 'express';
 import * as jwt from 'jsonwebtoken';
 import * as bcrypt from 'bcrypt';
-import { ResponseModel } from '../models/Schemas/ResponseModel';
+import { ResponseModel } from '../DTOs/ResponseModel';
 import { HelperClass } from './helperClass';
 import { DbModel } from '../models/shared/dbModels';
 import { TokenPayload } from '../DTOs/tokenPayload';

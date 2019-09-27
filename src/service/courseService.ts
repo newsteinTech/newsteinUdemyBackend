@@ -1,5 +1,5 @@
 import { courseModel } from '../models/Schemas/courseSchema';
-import { ResponseModel } from '../models/Schemas/ResponseModel';
+import { ResponseModel } from '../DTOs/ResponseModel';
 import { contentModel } from '../models/Schemas/contentSchema';
 import { studentModel } from '../models/Schemas/studentSchema';
 import { subscribeModel } from '../models/Schemas/subscribtionSchema';

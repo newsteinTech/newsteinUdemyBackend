@@ -1,5 +1,5 @@
 import * as nodeMailer from 'nodemailer';
-import { ResponseModel } from '../models/Schemas/ResponseModel';
+import { ResponseModel } from '../DTOs/ResponseModel';
 
 export class HelperClass{
 
