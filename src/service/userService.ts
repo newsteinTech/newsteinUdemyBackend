@@ -32,14 +32,14 @@ export class userService{
             // console.log(response);
                 
             if(newUser.role === Roles.studentRole){
-                let student = new DbModel.studentModel();
-                student["user"] = newUser;
+                let student: any = new DbModel.studentModel();
+                student.user = newUser;
                 await student.save();
             }
 
-            else if(newUser["role"]=== Roles.teacherRole){
-                let teacher = new DbModel.teacherModel();
-                teacher["user"] = newUser;
+            else if(newUser.role === Roles.teacherRole){
+                let teacher: any = new DbModel.teacherModel();
+                teacher.user = newUser;
                 await teacher.save();
             }
 

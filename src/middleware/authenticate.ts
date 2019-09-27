@@ -10,7 +10,6 @@ export class Authenticate{
             }
 
             let decryptToken = jwt.verify(token,"secret");
-            console.log(decryptToken);
             req.user = decryptToken;
             next(); 
         }catch(err) {

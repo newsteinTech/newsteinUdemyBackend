@@ -10,14 +10,13 @@ export class courseService{
 
     public static async createCourse(req){
         try{
-            let course = new courseModel(req.body);
+            let teacher: any = await DbModel.teacherModel.findOne({user: req.user._id}).exec();
+            let course: any = new DbModel.courseModel(req.body);
+            course.teacher = teacher;
             await course.save();
-            console.log(course);
 
-            return ResponseModel.getValidResponse("Course Created Successfully");
+            return ResponseModel.getValidResponse("Course Created!");
         }catch(err){
-            console.log("Error : ");
-            console.log(err);
             return ResponseModel.getInValidResponse(err);
         }
     }
@@ -42,22 +41,21 @@ export class courseService{
 
     public static async updateCourse(req){
         try{
-            let course = await courseModel.findOne({_id : req.body.courseId}).exec();
-            
+            let course: any = await DbModel.courseModel.findOne({_id : req.body._id}).populate({path: 'teacher'}).exec();
             if(course === null){
-                return ResponseModel.getInValidResponse("There is no such content");
+                return ResponseModel.getInValidResponse("Course not found with given id: " + req.body._id);
             }
 
-            await course.populate('contents').execPopulate();
+            // Verify Teacher's course
+            if (course.teacher.user != req.user._id) {
+                return ResponseModel.getInValidResponse("Bad request!");
+            }
 
-            course = HelperClass.updateRecord(course,req.body);
-
+            course = HelperClass.updateRecord(course, req.body);
             await course.save();
-            console.log(course);
+            
             return ResponseModel.getValidResponse("Course Updated Successfully");
         }catch(err){
-            console.log("Error : ");
-            console.log(err);
             return ResponseModel.getInValidResponse(err);
         }
     }
@@ -85,7 +83,10 @@ export class courseService{
 
     public static async getAllCourses(req){
         try{
-            let courses = await DbModel.courseModel.find().populate({path: 'teacher'}).exec();
+            let courses = await DbModel.courseModel
+            .find()
+            .populate({path: 'teacher', populate: {path: 'user', select: '-password'}})
+            .exec();
             
             return ResponseModel.getValidResponse(courses);
         }catch(err){
@@ -96,9 +97,12 @@ export class courseService{
 
     public static async getCourse(req){
         try{
-            let courses = await DbModel.courseModel.findById(req.params._id).populate({path: 'teacher'}).exec();
+            let course = await DbModel.courseModel
+            .findById(req.params._id)
+            .populate({path: 'teacher', populate: {path: 'user', select: '-password'}})
+            .exec();
             
-            return ResponseModel.getValidResponse(courses);
+            return ResponseModel.getValidResponse(course);
         }catch(err){
             console.log(err);
             return ResponseModel.getInValidResponse(err);
