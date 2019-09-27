@@ -4,6 +4,7 @@ import { contentModel } from '../models/Schemas/contentSchema';
 import { studentModel } from '../models/Schemas/studentSchema';
 import { subscribeModel } from '../models/Schemas/subscribtionSchema';
 import { HelperClass } from './helperClass';
+import { DbModel } from '../models/shared/dbModels';
 
 export class courseService{
 
@@ -84,11 +85,21 @@ export class courseService{
 
     public static async getAllCourses(req){
         try{
-            let course = await courseModel.find().exec();
-            console.log(course);
-            return ResponseModel.getValidResponse(course);
+            let courses = await DbModel.courseModel.find().populate({path: 'teacher'}).exec();
+            
+            return ResponseModel.getValidResponse(courses);
         }catch(err){
-            console.log("Error : ");
+            console.log(err);
+            return ResponseModel.getInValidResponse(err);
+        }
+    }
+
+    public static async getCourse(req){
+        try{
+            let courses = await DbModel.courseModel.findById(req.params._id).populate({path: 'teacher'}).exec();
+            
+            return ResponseModel.getValidResponse(courses);
+        }catch(err){
             console.log(err);
             return ResponseModel.getInValidResponse(err);
         }

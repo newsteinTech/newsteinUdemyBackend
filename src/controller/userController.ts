@@ -15,8 +15,7 @@ export class userController{
         res.send(response);
     }
 
-    public static async teacherDetails(req : express.Request, res : express.Response)
-    {
+    public static async teacherDetails(req : express.Request, res : express.Response){
         let response = await userService.teacherDetails(req);
         res.send(response);
     }

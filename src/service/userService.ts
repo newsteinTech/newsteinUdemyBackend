@@ -7,6 +7,7 @@ import { DbModel } from '../models/shared/dbModels';
 import { TokenPayload } from '../DTOs/tokenPayload';
 import { UserResponse } from '../DTOs/userResponse';
 import { LoginResponse } from '../DTOs/loginResponse';
+import { Roles } from '../constants/roles';
 
 export class userService{
 
@@ -20,7 +21,7 @@ export class userService{
             let password = await bcrypt.hash(req.body.password,12);
             req.body.password = password;
             if (req.body.isTeacher) {
-                req.body.role = "teacher"
+                req.body.role = Roles.teacherRole
             }
 
             let newUser: any = new DbModel.userModel(req.body);
@@ -30,13 +31,13 @@ export class userService{
             // let response = await HelperClass.sendMail(user,msg);
             // console.log(response);
                 
-            if(newUser.role === "student"){
+            if(newUser.role === Roles.studentRole){
                 let student = new DbModel.studentModel();
                 student["user"] = newUser;
                 await student.save();
             }
 
-            else if(newUser["role"]==="teacher"){
+            else if(newUser["role"]=== Roles.teacherRole){
                 let teacher = new DbModel.teacherModel();
                 teacher["user"] = newUser;
                 await teacher.save();
@@ -132,36 +133,19 @@ export class userService{
 
     public static async teacherDetails(req){
         try{
-            let user = await DbModel.userModel.findOne({mobile:req.body.mobile}).exec();
-            
-            if(user === null)
-            {
-                return ResponseModel.getInValidResponse("No Such User Exist");
-            }
+            let user:any = await DbModel.userModel.findById(req.user._id).exec();
+            let teacher: any = await DbModel.teacherModel.findOne({user: user}).populate({ path: 'user', select: '-password'}).exec();
 
-            let actual_password = await bcrypt.compare(req.body.password,user["password"]);
-            
-            if(!actual_password)
-            {
-                return ResponseModel.getInValidResponse("Wrong Credentials");
-            }
-
-            let teacher = await DbModel.studentModel.findOne({user: user._id}).exec();
-
-            teacher["job"] = req.body.job;
-            teacher["about"] = req.body.about;
-            teacher["qualification"] = req.body.qualification;
-            teacher["college"] = req.body.college;
-            user["profilePic"] = req.body.profilePic;
-            user["profileStatus"] = true;
+            teacher.about = req.body.about;
+            user.profilePic = req.body.user.profilePic;
+            user.name = req.body.user.name;
+            user.isProfileComplete = true;
 
             await user.save();
             await teacher.save();
-            console.log(teacher);
-            return ResponseModel.getValidResponse("Teacher Details Recorded");
-
+            
+            return ResponseModel.getValidResponse(teacher);
         }catch(err){
-            console.log("Error");
             console.log(err);
             return ResponseModel.getInValidResponse(err);
         }

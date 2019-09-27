@@ -5,8 +5,7 @@ export class Authenticate{
     {
         try{
             let token = req.header("Authorization");
-            if(!token)
-            {
+            if(!token){
                 return res.status(401).send("Access Denied");
             }
 
@@ -14,8 +13,7 @@ export class Authenticate{
             console.log(decryptToken);
             req.user = decryptToken;
             next(); 
-        }catch(err)
-        {
+        }catch(err) {
             console.log("Error");
             return res.json(err);
         }
