@@ -5,8 +5,7 @@ var teacher = new mongoose.Schema({
     job : {type: String},
     about : {type : String},
     qualification : {type: String},
-    college : {type : String},
-    courses_published : [{type: mongoose.SchemaTypes.ObjectId, ref:"theCourse"}]
+    college : {type : String}
 });
 
 export var teacherModel = mongoose.model("theTeacher",teacher);

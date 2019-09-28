@@ -6,6 +6,11 @@ import { userModel } from '../models/Schemas/userSchema';
 import { studentModel } from '../models/Schemas/studentSchema';
 import { teacherModel } from '../models/Schemas/teacherSchema';
 import { HelperClass } from './helperClass';
+import { Roles } from '../constants/roles';
+import { tokenGenerator } from '../DTO/tokenGenerator';
+import { loginResponse } from '../DTO/loginResponse';
+import { userResponse } from '../DTO/userResponse';
+import { encryptionKey } from '../constants/encryptionKey';
 
 export class userService{
 
@@ -25,17 +30,17 @@ export class userService{
             user = new userModel(req.body);
             await user.save();
 
-            let msg = "Congratulations "+ user["name"] + ",\nYou have Successfully joined our online learning Portal.. Enjoy!!";
+            let msg = "Congratulations "+ user["name"] + ",\nYou have Successfully joined our Online learning Portal.. Enjoy!!";
             let response = await HelperClass.sendMail(user,msg);
             console.log(response);
                 
-            if(user["role"]==="student"){
+            if(user["role"] === Roles.student ){
                 let students = new studentModel();
                 students["user"] = user._id;
                 await students.save();
             }
 
-            else if(user["role"]==="teacher"){
+            else if(user["role"]=== Roles.teacher){
                 let teacher = new teacherModel();
                 teacher["user"] = user._id;
                 await teacher.save();
@@ -255,20 +260,13 @@ export class userService{
                 expiresIn : "300h"
             };
 
-            let payLoad = {
-                "_id" : user._id,
-                "name" : user["name"],
-                "mobile" : user["mobile"],
-                "role" : user["role"]
-            };
+            let userData = new userResponse(user);
+            let payLoad = new tokenGenerator(user);
 
+            let accessToken = await jwt.sign(payLoad, encryptionKey.secretKey, option);
 
-            let accessToken = await jwt.sign(payLoad,"secret",option);
+            let token = new loginResponse(accessToken, userData);
 
-            let token = {
-                "token" : accessToken,
-                "user" : payLoad
-            };
             
             console.log(token);
             return ResponseModel.getValidResponse(token);

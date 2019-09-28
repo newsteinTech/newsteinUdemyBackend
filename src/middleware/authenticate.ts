@@ -1,4 +1,5 @@
 import * as jwt from 'jsonwebtoken';
+import { encryptionKey } from '../constants/encryptionKey';
 
 export class Authenticate{
     public static authenticate(req:any, res:any, next:any)
@@ -10,7 +11,7 @@ export class Authenticate{
                 return res.status(401).send("Access Denied");
             }
 
-            let decryptToken = jwt.verify(token,"secret");
+            let decryptToken = jwt.verify(token, encryptionKey.secretKey);
             console.log(decryptToken);
             req.user = decryptToken;
             next(); 

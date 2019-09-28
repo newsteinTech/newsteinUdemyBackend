@@ -13,7 +13,7 @@ export class HelperClass{
                 secure: false, 
                 auth: {
                   user: "yash.4198@gmail.com",
-                  pass: "<password>"  // go to google less secure apps and click on turn ON button .... 
+                  pass: "praseetha1"  // go to google less secure apps and click on turn ON button .... 
                 }
               });
     
