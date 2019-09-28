@@ -1,15 +1,14 @@
 import {ResponseModel} from '../DTOs/ResponseModel';
+import { Creds } from '../creds';
 
 import * as AWS from 'aws-sdk';
 
 export class S3Service {
-    private static bucketName: string = "udemy-project";
-
     public static async upload(req, res) {
         try {
             let s3bucket = new AWS.S3({
-                accessKeyId: "AKIA3ZGBXKLMGWVQ5S4F",
-                secretAccessKey: "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",
+                accessKeyId: Creds.accessKeyId,
+                secretAccessKey: Creds.secretAccessKey,
                 apiVersion: '2006-03-01'
               });
 
@@ -20,13 +19,13 @@ export class S3Service {
                 Key: file.name,
                 Body: file.data,
                 ACL: 'public-read',
-                Bucket: S3Service.bucketName
+                Bucket: Creds.bucketName
             };
 
             s3bucket.putObject(params).promise().then(data => {
                 console.log('Successfully uploaded data ', data);
                
-                return res.status(200).send(ResponseModel.getValidResponse(S3Service.buildUploadedFileUrl(file.name)));
+                return res.status(200).send(ResponseModel.getValidResponse(Creds.buildUploadedFileUrl(file.name)));
             }, error => {
                 console.error(error, error.stack);
                 return res.status(200).send(ResponseModel.getInValidResponse(error.message));
@@ -37,7 +36,5 @@ export class S3Service {
         }
     }
 
-    private static buildUploadedFileUrl(fileName: string) : string {
-        return `https://udemy-project.s3.ap-south-1.amazonaws.com/${fileName}`;
-    }
+    
 }
