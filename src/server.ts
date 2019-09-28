@@ -20,7 +20,7 @@ class Server{
 
     public constructor(){
         this.app = express();
-        this.app.listen(3000,"localhost",()=>{
+        this.app.listen(3000,()=>{
             console.log("App is running fine");
         });
 
