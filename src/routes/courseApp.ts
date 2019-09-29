@@ -5,7 +5,7 @@ import { Authorization } from '../middleware/authorization';
 
 export const courseApp : express.Router = express.Router();
 
-courseApp.post('/create', [Authenticate.authenticate, Authorization.authorizeTeacher], courseController.createCourse);
+courseApp.post('/', [Authenticate.authenticate, Authorization.authorizeTeacher], courseController.createCourse);
 courseApp.put('/', [Authenticate.authenticate, Authorization.authorizeTeacher], courseController.updateCourse);
 courseApp.delete('/:_id', [Authenticate.authenticate, Authorization.authorizeAdmin], courseController.deleteCourse);
 courseApp.get('/', Authenticate.authenticate, courseController.getAllCourses);

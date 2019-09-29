@@ -1,8 +1,5 @@
 import { courseModel } from '../models/Schemas/courseSchema';
 import { ResponseModel } from '../DTOs/ResponseModel';
-import { contentModel } from '../models/Schemas/contentSchema';
-import { studentModel } from '../models/Schemas/studentSchema';
-import { subscribeModel } from '../models/Schemas/subscribtionSchema';
 import { HelperClass } from './helperClass';
 import { DbModel } from '../models/shared/dbModels';
 
@@ -15,7 +12,7 @@ export class courseService{
             course.teacher = teacher;
             await course.save();
 
-            return ResponseModel.getValidResponse("Course Created!");
+            return ResponseModel.getValidResponse(course);
         }catch(err){
             return ResponseModel.getInValidResponse(err);
         }
@@ -54,7 +51,7 @@ export class courseService{
             course = HelperClass.updateRecord(course, req.body);
             await course.save();
             
-            return ResponseModel.getValidResponse("Course Updated Successfully");
+            return ResponseModel.getValidResponse(course);
         }catch(err){
             return ResponseModel.getInValidResponse(err);
         }
@@ -63,13 +60,13 @@ export class courseService{
     public static async subscribeCourse(req){
         try{
             let course = await courseModel.findOne({_id : req.body.courseId}).exec();
-            let student = await studentModel.findOne({_id : req.body.studentId}).exec();
+            let student = await DbModel.studentModel.findOne({_id : req.body.studentId}).exec();
 
             if(course === null || student === null){
                 return ResponseModel.getInValidResponse("Invalid Credentials");
             }
 
-            let subscribeCourse = new subscribeModel(req.body);
+            let subscribeCourse = new DbModel.subscriptionModel(req.body);
             console.log(subscribeCourse);
             await subscribeCourse.save();
 

@@ -5,4 +5,6 @@ export class Collections {
 
     static get courseCollectionName()     { return "Courses"; }
     static get commentCollectionName()     { return "Comments"; }
+
+    static get SubscriptionCollectionName()     { return "Subscriptions"; }
 }

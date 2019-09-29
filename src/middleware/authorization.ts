@@ -5,7 +5,7 @@ export class Authorization {
     {
         try{
             if(req.user.role != Roles.teacherRole){
-                return res.status(401).send("Access Denied");
+                return res.status(401).send("Unauthorized request");
             }
             next(); 
         }catch(err) {
@@ -17,7 +17,7 @@ export class Authorization {
     {
         try{
             if(req.user.role != Roles.adminRole){
-                return res.status(401).send("Access Denied");
+                return res.status(401).send("Unauthorized request");
             }
             next(); 
         }catch(err) {

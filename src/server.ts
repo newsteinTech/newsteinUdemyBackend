@@ -1,6 +1,8 @@
 import * as express from 'express';
 import * as bodyParser from 'body-parser';
 import * as cors from 'cors';
+import * as compression from 'compression';
+
 import { DbConnection } from './startup/dbConnection';
 import { Routes } from "./startup/router";
 import { ApiLogger } from './middleware/apiLogger';
@@ -11,6 +13,8 @@ class Server{
 
     public constructor(){
         this.app = express();   
+
+        this.app.use(compression());
 
         this.configBodyParser();
         this.app.use(cors());
@@ -25,8 +29,8 @@ class Server{
     }
 
     private configBodyParser():void{
+        this.app.use(bodyParser.urlencoded({extended : true}));
         this.app.use(bodyParser.json());
-        this.app.use(bodyParser.urlencoded({extended : false}));
     }
 
     private registerMiddleWares() {
